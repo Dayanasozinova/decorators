@@ -3,22 +3,22 @@ import datetime
 import os
 import re
 
+def parametrized_decor(parameter):
+    def decor(old_function):
+        def new_function(*args, **kwargs):
+            result = old_function(*args, **kwargs)
+            with open(parameter, 'w') as f:
+                f.write(f'Дата и время вызова функции: {datetime.datetime.now()} \n '
+                        f'Имя функции: {old_function.__name__} \n '
+                        f'Аргументы функции: {args} \n '
+                        f'Возвращаемое значение функции: {result} \n'
+                        f'Путь к логам: {os.path.abspath("log.txt")}')
+            return result
+        return new_function
+    return decor
 
-def decor_(old_function):
-    def new_function(*args, **kwargs):
-        result = old_function(*args, **kwargs)
-        with open('log.txt', 'w') as f:
-            f.write(f'Дата и время вызова функции: {datetime.datetime.now()} \n '
-                    f'Имя функции: {old_function.__name__} \n '
-                    f'Аргументы функции: {args} \n '
-                    f'Возвращаемое значение функции: {result} \n'
-                    f'Путь к логам: {os.path.abspath("log.txt")}')
-        return result
 
-    return new_function
-
-
-@decor_
+@parametrized_decor(parameter='C://Users//gayaz//OneDrive//Рабочий стол//Коды//Декораторы//log.txt')
 def phone_book_REGEX(path_to_file):
     with open(path_to_file, encoding='utf8') as f:
         rows = csv.reader(f, delimiter=",")
